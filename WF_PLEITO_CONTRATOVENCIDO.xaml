@@ -1,0 +1,760 @@
+﻿<Activity mc:Ignorable="sap sap2010 sads" x:Class="WF_PLEITO_CONTRATOVENCIDO"
+ xmlns="http://schemas.microsoft.com/netfx/2009/xaml/activities"
+ xmlns:av="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+ xmlns:qa="clr-namespace:QFlow.Activity;assembly=QFlow.Activity"
+ xmlns:qc="clr-namespace:QFlow.Common;assembly=QFlow.Common"
+ xmlns:sads="http://schemas.microsoft.com/netfx/2010/xaml/activities/debugger"
+ xmlns:sap="http://schemas.microsoft.com/netfx/2009/xaml/activities/presentation"
+ xmlns:sap2010="http://schemas.microsoft.com/netfx/2010/xaml/activities/presentation"
+ xmlns:scg="clr-namespace:System.Collections.Generic;assembly=mscorlib"
+ xmlns:sco="clr-namespace:System.Collections.ObjectModel;assembly=mscorlib"
+ xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:Members>
+    <x:Property Name="prm_dcr_plo" Type="InArgument(x:String)" />
+    <x:Property Name="prm_cdg_usr_grn_cta" Type="InArgument(x:Int64)" />
+    <x:Property Name="prm_nro_sqs_avc" Type="InArgument(x:Int64)" />
+    <x:Property Name="prm_cdg_pss" Type="InArgument(x:Int64)" />
+    <x:Property Name="instanceSummary" Type="InArgument(x:String)" />
+    <x:Property Name="prm_nom_pss" Type="InArgument(x:String)" />
+  </x:Members>
+  <sap2010:WorkflowViewState.IdRef>WF_PLEITO_DZERO_1</sap2010:WorkflowViewState.IdRef>
+  <TextExpression.NamespacesForImplementation>
+    <sco:Collection x:TypeArguments="x:String">
+      <x:String>System</x:String>
+      <x:String>System.Activities</x:String>
+      <x:String>Microsoft.VisualBasic.CompilerServices</x:String>
+      <x:String>QFlow.Common</x:String>
+    </sco:Collection>
+  </TextExpression.NamespacesForImplementation>
+  <TextExpression.ReferencesForImplementation>
+    <sco:Collection x:TypeArguments="AssemblyReference">
+      <AssemblyReference>mscorlib</AssemblyReference>
+      <AssemblyReference>System</AssemblyReference>
+      <AssemblyReference>System.Core</AssemblyReference>
+      <AssemblyReference>System.ServiceModel</AssemblyReference>
+      <AssemblyReference>System.Activities</AssemblyReference>
+      <AssemblyReference>Microsoft.VisualBasic</AssemblyReference>
+      <AssemblyReference>QFlow.Common</AssemblyReference>
+    </sco:Collection>
+  </TextExpression.ReferencesForImplementation>
+  <StateMachine sap2010:Annotation.AnnotationText="Objetivo: Fluxo de contrato vencido&#xA;Autor: Jonas&#xA;Data: 08/02/2016" DisplayName="Liberação Contrato Vencido" sap2010:WorkflowViewState.IdRef="StateMachine_1">
+    <StateMachine.InitialState>
+      <State x:Name="__ReferenceID1" DisplayName="Aviso de abertura de pleito" sap2010:WorkflowViewState.IdRef="State_16">
+        <State.Entry>
+          <Sequence sap2010:WorkflowViewState.IdRef="Sequence_13">
+            <qa:StoredProcedureActivity sap2010:WorkflowViewState.IdRef="StoredProcedureActivity_14" Name="[&quot;qwf1p004.prc_obtem_tarefa_inicial&quot;]" Parameters="[&quot;prm_cdg_usr_grn_cta;prm_tfa_ini&quot;]" SystemName="[&quot;FACTORING&quot;]" />
+            <qa:StoredProcedureActivity sap2010:WorkflowViewState.IdRef="StoredProcedureActivity_15" Name="[&quot;qwf1p004.prc_obtem_prefixo_assunto_ema&quot;]" Parameters="[&quot;prm_cdg_pss,prm_nro_sqs_avc,prm_pre_ass_ema_ava,prm_pre_ass_ema_abe,prm_pre_ass_ema_ret&quot;]" SystemName="[&quot;FACTORING&quot;]" />
+            <qa:StoredProcedureActivity sap2010:WorkflowViewState.IdRef="StoredProcedureActivity_16" Name="[&quot;qwf1p002.prc_obtem_email_agente&quot;]" Parameters="[&quot;prm_cdg_usr_grn_cta;prm_ema_usr_grn_cta;prm_cdg_pss&quot;]" SystemName="[&quot;FACTORING&quot;]" />
+            <qa:StoredProcedureActivity sap2010:WorkflowViewState.IdRef="StoredProcedureActivity_18" Name="[&quot;qwf1p004.prc_obtem_nomes&quot;]" Parameters="[&quot;prm_cdg_usr_grn_cta;prm_cdg_pss;prm_nom_usr_abe;prm_nom_pss&quot;]" SystemName="[&quot;FACTORING&quot;]" />
+            <If Condition="[(prm_tfa_ini = &quot;Gerente Comercial&quot;) OR (prm_tfa_ini = &quot;Gerente Regional&quot;)]" sap2010:WorkflowViewState.IdRef="If_1">
+              <If.Then>
+                <Sequence sap2010:WorkflowViewState.IdRef="Sequence_23">
+                  <qa:StoredProcedureActivity sap2010:WorkflowViewState.IdRef="StoredProcedureActivity_17" Name="[&quot;qwf1p002.prc_obtem_gerente_regional&quot;]" Parameters="[&quot;prm_cdg_usr_grn_cta,prm_pap_grn_rgi&quot;]" SystemName="[&quot;FACTORING&quot;]" />
+                  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_15">
+                    <qa:SendEmailActivity IsBodyHtml="{x:Null}" Address="[prm_ema_usr_grn_cta]" AddressFromPapers="[&quot;Assistente &quot; + prm_pap_grn_rgi + &quot;,&quot;+ prm_pap_grn_rgi + &quot;,Assessora Executiva Regional Júnior&quot;]" Body="[&quot;Fluxo: WF_PLEITO_CONTRATOVENCIDO&quot; + Environment.NewLine +&#xA;&quot;Resumo da instância: Liberação de Contrato Vencido do Cedente: &quot; + prm_nom_pss + &quot; Aberto por: &quot; + prm_nom_usr_abe + Environment.NewLine + &#xA;&quot;Hora abertura: &quot; + Datetime.Now.ToString(&quot;dd/MM/yyyy HH:mm:ss&quot;) + Environment.NewLine +&#xA;&quot;Descrição do pleito:&quot; + prm_dcr_plo]" ClimbToUpperPaper="Sim" sap2010:WorkflowViewState.IdRef="SendEmailActivity_8" Subject="[prm_pre_ass_ema_abe]" />
+                  </Sequence>
+                </Sequence>
+              </If.Then>
+              <If.Else>
+                <Sequence sap2010:WorkflowViewState.IdRef="Sequence_24">
+                  <qa:SendEmailActivity IsBodyHtml="{x:Null}" Address="[prm_ema_usr_grn_cta]" AddressFromPapers="[&quot;Assessora Executiva Regional Júnior,Assessora Comercial Sênior&quot;]" Body="[&quot;Fluxo: WF_PLEITO_CONTRATOVENCIDO&quot; + Environment.NewLine +&#xA;&quot;Resumo da instância: Liberação de Contrato Vencido do Cedente: &quot; + prm_nom_pss + &quot; Aberto por: &quot; + prm_nom_usr_abe + Environment.NewLine + &#xA;&quot;Hora abertura: &quot; + Datetime.Now.ToString(&quot;dd/MM/yyyy HH:mm:ss&quot;)  + Environment.NewLine +&#xA;&quot;Descrição do pleito:&quot; + prm_dcr_plo]" ClimbToUpperPaper="Não" sap2010:WorkflowViewState.IdRef="SendEmailActivity_33" Subject="[prm_pre_ass_ema_abe]" />
+                </Sequence>
+              </If.Else>
+            </If>
+          </Sequence>
+        </State.Entry>
+        <State.Transitions>
+          <Transition DisplayName="" sap2010:WorkflowViewState.IdRef="Transition_23">
+            <Transition.To>
+              <State x:Name="__ReferenceID8" DisplayName="Decide Início" sap2010:WorkflowViewState.IdRef="State_14">
+                <State.Entry>
+                  <Persist sap2010:WorkflowViewState.IdRef="Persist_4" />
+                </State.Entry>
+                <State.Transitions>
+                  <Transition DisplayName="Assessor Comercial" sap2010:WorkflowViewState.IdRef="Transition_17" Condition="[prm_tfa_ini &lt;&gt; &quot;Assessora Comercial Sênior&quot; and prm_tfa_ini &lt;&gt; &quot;Assessora Executiva Regional Júnior&quot;]">
+                    <Transition.To>
+                      <State x:Name="__ReferenceID3" DisplayName="Análise do Assessor Comercial" sap2010:WorkflowViewState.IdRef="State_3">
+                        <State.Entry>
+                          <Sequence sap2010:WorkflowViewState.IdRef="Sequence_1">
+                            <Persist sap2010:WorkflowViewState.IdRef="Persist_5" />
+                            <qa:TaskActivity DeadLine="{x:Null}" NotifyDeadLine="{x:Null}" Description="[&quot;O Executivo comercial dá seu parecer&quot;]" DisplayName="Tarefa_assessor_comercial" sap2010:WorkflowViewState.IdRef="TaskActivity_2" Priority="Alta" Role="[&quot;Assessora Executiva Regional Júnior&quot;]" Summary="[&quot;Análise do pedido&quot;]" />
+                            <qa:StoredProcedureActivity sap2010:WorkflowViewState.IdRef="StoredProcedureActivity_27" Name="[&quot;qwf1p002.prc_atualiza_parecer_executivo&quot;]" Parameters="[&quot;prm_cdg_pss;prm_nro_sqs_avc;prm_ult_prc_grn&quot;]" SystemName="[&quot;FACTORING&quot;]" />
+                          </Sequence>
+                        </State.Entry>
+                        <State.Transitions>
+                          <Transition DisplayName="" sap2010:WorkflowViewState.IdRef="Transition_27">
+                            <Transition.To>
+                              <State x:Name="__ReferenceID12" DisplayName="Ret. Gerente Comercial?" sap2010:WorkflowViewState.IdRef="State_20">
+                                <State.Transitions>
+                                  <Transition DisplayName="Não" sap2010:WorkflowViewState.IdRef="Transition_20" Condition="[If(prm_idc_retorno.GetSelectedItem(), New FixedListItem()).Value = &quot;0&quot;]">
+                                    <Transition.To>
+                                      <State x:Name="__ReferenceID9" DisplayName="Assessor Comercial aprova?" sap2010:WorkflowViewState.IdRef="State_15">
+                                        <State.Transitions>
+                                          <Transition DisplayName="Reprovado" sap2010:WorkflowViewState.IdRef="Transition_2" Condition="[If(prm_idc_apv_exe.GetSelectedItem(), New FixedListItem()).Value &lt;&gt; &quot;1&quot;]">
+                                            <Transition.To>
+                                              <State x:Name="__ReferenceID4" DisplayName="Aviso de reprovação Assessor Comercial" sap2010:WorkflowViewState.IdRef="State_4">
+                                                <State.Entry>
+                                                  <qa:SendEmailActivity IsBodyHtml="{x:Null}" Address="[prm_ema_usr_grn_cta]" AddressFromPapers="[&quot;Assistente &quot; + prm_pap_grn_rgi + &quot;,&quot; +  prm_pap_grn_rgi +&quot;,Supervisora de Controladoria Júnior,Analista de Operações Financeiras Júnior&quot;]" Body="[&quot;Fluxo: WF_PLEITO_CONTRATOVENCIDO&quot; + Environment.NewLine &amp;&#xA;&quot;Resumo da instância: &quot; &amp; instanceSummary + Environment.NewLine &amp;&#xA;&quot;Hora parecer: &quot; &amp; Datetime.Now.ToString(&quot;dd/MM/yyyy HH:mm:ss&quot;) &amp; Environment.NewLine &amp;&#xA;&quot;Parecer do Assessor Comercial: &quot; + prm_ult_prc_grn]" ClimbToUpperPaper="Sim" sap2010:WorkflowViewState.IdRef="SendEmailActivity_11" Subject="[prm_pre_ass_ema_ava + &quot; A avaliação de número &quot; + prm_nro_sqs_avc.ToString() + &quot; do cliente &quot; + prm_cdg_pss.ToString() + &quot; - &quot; + prm_nom_pss + &quot; foi reprovada pelo Assessor Comercial&quot;]" />
+                                                </State.Entry>
+                                                <State.Transitions>
+                                                  <Transition DisplayName="Concluído" sap2010:WorkflowViewState.IdRef="Transition_3">
+                                                    <Transition.To>
+                                                      <State x:Name="__ReferenceID0" DisplayName="Fim" sap2010:WorkflowViewState.IdRef="State_2" IsFinal="True">
+                                                        <State.Entry>
+                                                          <qa:StoredProcedureActivity sap2010:WorkflowViewState.IdRef="StoredProcedureActivity_8" Name="[&quot;qwf1p002.prc_finaliza_avaliacao&quot;]" Parameters="[&quot;prm_cdg_pss;prm_nro_sqs_avc&quot;]" SystemName="[&quot;FACTORING&quot;]" />
+                                                        </State.Entry>
+                                                      </State>
+                                                    </Transition.To>
+                                                  </Transition>
+                                                </State.Transitions>
+                                              </State>
+                                            </Transition.To>
+                                          </Transition>
+                                          <Transition DisplayName="Aprovado" sap2010:WorkflowViewState.IdRef="Transition_4" Condition="[If(prm_idc_apv_exe.GetSelectedItem(), New FixedListItem()).Value = &quot;1&quot;]">
+                                            <Transition.To>
+                                              <State x:Name="__ReferenceID13" DisplayName="Aviso de aprovação pelo Assessor Comercial" sap2010:WorkflowViewState.IdRef="State_22">
+                                                <State.Exit>
+                                                  <qa:SendEmailActivity IsBodyHtml="{x:Null}" Address="[prm_ema_usr_grn_cta]" AddressFromPapers="[&quot;Assistente &quot; + prm_pap_grn_rgi + &quot;,&quot; + prm_pap_grn_rgi + &quot;,Analista de Crédito Júnior,Supervisora de Controladoria Júnior,Analista de Operações Financeiras Júnior&quot;]" Body="[&quot;Fluxo: WF_PLEITO_CONTRATOVENCIDO&quot; + Environment.NewLine +&#xA;&quot;Resumo da instância: &quot; + instanceSummary + Environment.NewLine +&#xA;&quot;Hora parecer: &quot; + Datetime.Now.ToString(&quot;dd/MM/yyyy HH:mm:ss&quot;) + Environment.NewLine +&#xA;&quot;Parecer do Assesor Comercial: &quot; + prm_ult_prc_grn]" ClimbToUpperPaper="Sim" sap2010:WorkflowViewState.IdRef="SendEmailActivity_9" Subject="[prm_pre_ass_ema_ava  +&quot; foi aprovada pelo Assessor Comercial&quot;]" />
+                                                </State.Exit>
+                                                <State.Transitions>
+                                                  <Transition DisplayName="" sap2010:WorkflowViewState.IdRef="Transition_32">
+                                                    <Transition.To>
+                                                      <State x:Name="__ReferenceID2" DisplayName="Análise do Gerente/Supervisor de Crédito" sap2010:WorkflowViewState.IdRef="State_5">
+                                                        <State.Entry>
+                                                          <Sequence sap2010:WorkflowViewState.IdRef="Sequence_2">
+                                                            <Persist sap2010:WorkflowViewState.IdRef="Persist_6" />
+                                                            <qa:TaskActivity DeadLine="{x:Null}" NotifyDeadLine="{x:Null}" Description="[&quot;O Gerente de Crédito, aprova ou não o parecer do Assessor Comercial&quot;]" DisplayName="Tarefa_gerente_credito" sap2010:WorkflowViewState.IdRef="TaskActivity_3" Priority="Alta" Role="[&quot;Supervisor de Crédito&quot;]" Summary="[&quot;Análise do pleito pelo Supervisor/Gerente de Crédito&quot;]" />
+                                                            <qa:StoredProcedureActivity sap2010:WorkflowViewState.IdRef="StoredProcedureActivity_19" Name="[&quot;qwf1p002.prc_atualiza_parecer_analista&quot;]" Parameters="[&quot;prm_cdg_pss;prm_nro_sqs_avc;prm_prc_grn_crd&quot;]" SystemName="[&quot;FACTORING&quot;]" />
+                                                          </Sequence>
+                                                        </State.Entry>
+                                                        <State.Transitions>
+                                                          <Transition DisplayName="T1" sap2010:WorkflowViewState.IdRef="Transition_83">
+                                                            <Transition.To>
+                                                              <State x:Name="__ReferenceID10" DisplayName="Supervisor Crédito Aprovar?" sap2010:WorkflowViewState.IdRef="State_17">
+                                                                <State.Transitions>
+                                                                  <Transition DisplayName="Reprovado" sap2010:WorkflowViewState.IdRef="Transition_5" Condition="[If(prm_idc_apv_grn_crd.GetSelectedItem(), New FixedListItem()).Value &lt;&gt; &quot;1&quot;]">
+                                                                    <Transition.To>
+                                                                      <State x:Name="__ReferenceID7" DisplayName="Aviso reprovação Supervisor Crédito" sap2010:WorkflowViewState.IdRef="State_12">
+                                                                        <State.Entry>
+                                                                          <Sequence sap2010:WorkflowViewState.IdRef="Sequence_7">
+                                                                            <qa:SendEmailActivity IsBodyHtml="{x:Null}" Address="[prm_ema_usr_grn_cta]" AddressFromPapers="[&quot;Assistente &quot; + prm_pap_grn_rgi + &quot;,&quot;+ prm_pap_grn_rgi + &quot;,Assessora Executiva Regional Júnior,Supervisora de Controladoria Júnior&quot;]" Body="[&quot;Fluxo: WF_PLEITO_CONTRATOVENCIDO&quot; &amp; Environment.NewLine &amp;&#xA;&quot;Resumo da instância: &quot; &amp; instanceSummary + Environment.NewLine &amp;&#xA;&quot;Hora parecer: &quot; &amp; Datetime.Now.ToString(&quot;dd/MM/yyyy HH:mm:ss&quot;) &amp; Environment.NewLine &amp;&#xA;&quot;Parecer do Supervisor/Gerente de Crédito: &quot; &amp; prm_prc_grn_crd]" ClimbToUpperPaper="Sim" sap2010:WorkflowViewState.IdRef="SendEmailActivity_2" Subject="[prm_pre_ass_ema_ava + &quot;foi reprovada pelo Supervisor/Gerente de Crédito&quot;]" />
+                                                                          </Sequence>
+                                                                        </State.Entry>
+                                                                        <State.Transitions>
+                                                                          <Transition DisplayName="Concluído" sap2010:WorkflowViewState.IdRef="Transition_15" To="{x:Reference __ReferenceID0}" />
+                                                                        </State.Transitions>
+                                                                      </State>
+                                                                    </Transition.To>
+                                                                  </Transition>
+                                                                  <Transition DisplayName="Aprovado" sap2010:WorkflowViewState.IdRef="Transition_6" Condition="[If(prm_idc_apv_grn_crd.GetSelectedItem(), New FixedListItem()).Value = &quot;1&quot;]">
+                                                                    <Transition.To>
+                                                                      <State x:Name="__ReferenceID5" DisplayName="Aviso de aprovação pelo supervisor/gerente crédito" sap2010:WorkflowViewState.IdRef="State_6">
+                                                                        <State.Entry>
+                                                                          <qa:SendEmailActivity IsBodyHtml="{x:Null}" Address="[prm_ema_usr_grn_cta]" AddressFromPapers="[&quot;Assistente &quot; + prm_pap_grn_rgi + &quot;,&quot;+ prm_pap_grn_rgi + &quot;,Assessora Executiva Regional Júnior,Assistente de Cadastro Júnior,Supervisora de Controladoria Júnior&quot;]" Body="[&quot;Fluxo: WF_PLEITO_CONTRATOVENCIDO&quot; &amp; Environment.NewLine &amp;&#xA;&quot;Resumo da instância: &quot; &amp; instanceSummary + Environment.NewLine &amp;&#xA;&quot;Hora parecer: &quot; &amp; Datetime.Now.ToString(&quot;dd/MM/yyyy HH:mm:ss&quot;) &amp; Environment.NewLine &amp;&#xA;&quot;Parecer do Supervisor/Gerente de Crédito:&quot; &amp; prm_prc_grn_crd]" ClimbToUpperPaper="Sim" sap2010:WorkflowViewState.IdRef="SendEmailActivity_15" Subject="[prm_pre_ass_ema_ava + &quot; foi aprovada pelo Supervisor/Gerente de Crédito&quot;]" />
+                                                                        </State.Entry>
+                                                                        <State.Transitions>
+                                                                          <Transition DisplayName="T2" sap2010:WorkflowViewState.IdRef="Transition_85">
+                                                                            <Transition.To>
+                                                                              <State x:Name="__ReferenceID6" DisplayName="Análise do setor de cadastro" sap2010:WorkflowViewState.IdRef="State_10">
+                                                                                <State.Entry>
+                                                                                  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_18">
+                                                                                    <Persist sap2010:WorkflowViewState.IdRef="Persist_10" />
+                                                                                    <qa:TaskActivity DeadLine="{x:Null}" NotifyDeadLine="{x:Null}" Description="[&quot;Cadastro recebe o pleito, da seu parecer&quot;]" DisplayName="Tarefa_cadastro" sap2010:WorkflowViewState.IdRef="TaskActivity_8" Priority="Alta" Role="[&quot;Assistente de Cadastro Júnior&quot;]" Summary="[&quot;Análise do pleito pelo cadastro&quot;]" />
+                                                                                    <qa:StoredProcedureActivity sap2010:WorkflowViewState.IdRef="StoredProcedureActivity_21" Name="[&quot;qwf1p002.prc_atualiza_parecer_cadastro&quot;]" Parameters="[&quot;prm_cdg_pss,prm_nro_sqs_avc,prm_prc_cad&quot;]" SystemName="[&quot;FACTORING&quot;]" />
+                                                                                  </Sequence>
+                                                                                </State.Entry>
+                                                                                <State.Transitions>
+                                                                                  <Transition DisplayName="" sap2010:WorkflowViewState.IdRef="Transition_61">
+                                                                                    <Transition.To>
+                                                                                      <State x:Name="__ReferenceID14" DisplayName="Aviso do parecer do cadastro" sap2010:WorkflowViewState.IdRef="State_34">
+                                                                                        <State.Entry>
+                                                                                          <qa:SendEmailActivity IsBodyHtml="{x:Null}" Address="[prm_ema_usr_grn_cta]" AddressFromPapers="[&quot;Assistente &quot; + prm_pap_grn_rgi + &quot;,&quot;+ prm_pap_grn_rgi + &quot;,Assessora Executiva Regional Júnior,Supervisora de Controladoria Júnior,Analista de Operações Financeiras Júnior&quot;]" Body="[&quot;Fluxo: WF_PLEITO_CONTRATOVENCIDO &quot; &amp; Environment.NewLine &amp;&#xA;&quot;Resumo da instância: &quot; &amp; instanceSummary + Environment.NewLine &amp;&#xA;&quot;Hora parecer: &quot; &amp; Datetime.Now.ToString(&quot;dd/MM/yyyy HH:mm:ss&quot;) &amp; Environment.NewLine &amp;&#xA;&quot;Parecer do cadastro: &quot; + prm_prc_cad]" ClimbToUpperPaper="Sim" sap2010:WorkflowViewState.IdRef="SendEmailActivity_26" Subject="[prm_pre_ass_ema_ava +&quot; cadastrado e pronto para operação&quot;]" />
+                                                                                        </State.Entry>
+                                                                                        <State.Transitions>
+                                                                                          <Transition DisplayName="Concluído" sap2010:WorkflowViewState.IdRef="Transition_62" To="{x:Reference __ReferenceID0}" />
+                                                                                        </State.Transitions>
+                                                                                      </State>
+                                                                                    </Transition.To>
+                                                                                  </Transition>
+                                                                                </State.Transitions>
+                                                                              </State>
+                                                                            </Transition.To>
+                                                                          </Transition>
+                                                                        </State.Transitions>
+                                                                      </State>
+                                                                    </Transition.To>
+                                                                  </Transition>
+                                                                </State.Transitions>
+                                                              </State>
+                                                            </Transition.To>
+                                                          </Transition>
+                                                        </State.Transitions>
+                                                      </State>
+                                                    </Transition.To>
+                                                  </Transition>
+                                                </State.Transitions>
+                                              </State>
+                                            </Transition.To>
+                                          </Transition>
+                                        </State.Transitions>
+                                      </State>
+                                    </Transition.To>
+                                  </Transition>
+                                  <Transition DisplayName="Sim" sap2010:WorkflowViewState.IdRef="Transition_63" Condition="[If(prm_idc_retorno.GetSelectedItem(), New FixedListItem()).Value &lt;&gt; &quot;0&quot;]">
+                                    <Transition.To>
+                                      <State x:Name="__ReferenceID15" DisplayName="Aviso de retorno para gerente comercial" sap2010:WorkflowViewState.IdRef="State_35">
+                                        <State.Entry>
+                                          <qa:SendEmailActivity IsBodyHtml="{x:Null}" Address="[prm_ema_usr_grn_cta]" AddressFromPapers="[&quot;Assistente &quot; + prm_pap_grn_rgi + &quot;,&quot; + prm_pap_grn_rgi]" Body="[&quot;Fluxo: WF_PLEITO_CONTRATOVENCIDO&quot; + Environment.NewLine +&#xA;&quot;Resumo da instância: &quot; + instanceSummary + Environment.NewLine + &#xA;&quot;Hora abertura: &quot; + Datetime.Now.ToString(&quot;dd/MM/yyyy HH:mm:ss&quot;) + Environment.NewLine +&#xA;&quot;Parecer do Executivo Comercial: &quot; + prm_ult_prc_grn]" ClimbToUpperPaper="Sim" sap2010:WorkflowViewState.IdRef="SendEmailActivity_10" Subject="[prm_pre_ass_ema_ret &amp; &quot;da assessora comercial para o gerente comercial&quot;]" />
+                                        </State.Entry>
+                                        <State.Transitions>
+                                          <Transition DisplayName="" sap2010:WorkflowViewState.IdRef="Transition_64">
+                                            <Transition.To>
+                                              <State x:Name="__ReferenceID11" DisplayName="Análise do Gerente Comecial" sap2010:WorkflowViewState.IdRef="State_19">
+                                                <State.Entry>
+                                                  <Sequence sap2010:WorkflowViewState.IdRef="Sequence_22">
+                                                    <Persist sap2010:WorkflowViewState.IdRef="Persist_11" />
+                                                    <qa:StoredProcedureActivity sap2010:WorkflowViewState.IdRef="StoredProcedureActivity_24" Name="[&quot;qwf1p002.prc_garante_papel_disparador&quot;]" Parameters="[&quot;prm_cdg_usr_grn_cta,prm_pap_ini_flx&quot;]" SystemName="[&quot;FACTORING&quot;]" />
+                                                    <qa:TaskActivity DeadLine="{x:Null}" NotifyDeadLine="{x:Null}" Description="[&quot;Revisar a informação do pleito&quot;]" DisplayName="Tarefa_gerente_comercial" sap2010:WorkflowViewState.IdRef="TaskActivity_12" Priority="Alta" Role="[prm_pap_ini_flx]" Summary="[&quot;Revisar a informação do pleito&quot;]" />
+                                                    <qa:StoredProcedureActivity sap2010:WorkflowViewState.IdRef="StoredProcedureActivity_26" Name="[&quot;qwf1p002.prc_atualiza_pleito&quot;]" Parameters="[&quot;prm_cdg_pss,prm_nro_sqs_avc,prm_dcr_plo&quot;]" SystemName="[&quot;FACTORING&quot;]" />
+                                                  </Sequence>
+                                                </State.Entry>
+                                                <State.Transitions>
+                                                  <Transition DisplayName="" sap2010:WorkflowViewState.IdRef="Transition_26" To="{x:Reference __ReferenceID1}" />
+                                                </State.Transitions>
+                                              </State>
+                                            </Transition.To>
+                                          </Transition>
+                                        </State.Transitions>
+                                      </State>
+                                    </Transition.To>
+                                  </Transition>
+                                </State.Transitions>
+                              </State>
+                            </Transition.To>
+                          </Transition>
+                        </State.Transitions>
+                      </State>
+                    </Transition.To>
+                  </Transition>
+                  <Transition DisplayName="Supervisor Crédito" sap2010:WorkflowViewState.IdRef="Transition_84" To="{x:Reference __ReferenceID2}" Condition="[prm_tfa_ini = &quot;Assessora Comercial Sênior&quot; OR prm_tfa_ini = &quot;Assessora Executiva Regional Júnior&quot;]" />
+                </State.Transitions>
+              </State>
+            </Transition.To>
+          </Transition>
+        </State.Transitions>
+      </State>
+    </StateMachine.InitialState>
+    <x:Reference>__ReferenceID0</x:Reference>
+    <x:Reference>__ReferenceID3</x:Reference>
+    <x:Reference>__ReferenceID4</x:Reference>
+    <x:Reference>__ReferenceID2</x:Reference>
+    <x:Reference>__ReferenceID5</x:Reference>
+    <x:Reference>__ReferenceID6</x:Reference>
+    <x:Reference>__ReferenceID7</x:Reference>
+    <x:Reference>__ReferenceID8</x:Reference>
+    <x:Reference>__ReferenceID9</x:Reference>
+    <x:Reference>__ReferenceID1</x:Reference>
+    <x:Reference>__ReferenceID10</x:Reference>
+    <x:Reference>__ReferenceID11</x:Reference>
+    <x:Reference>__ReferenceID12</x:Reference>
+    <x:Reference>__ReferenceID13</x:Reference>
+    <x:Reference>__ReferenceID14</x:Reference>
+    <x:Reference>__ReferenceID15</x:Reference>
+    <StateMachine.Variables>
+      <Variable x:TypeArguments="x:String" Name="prm_ema_usr_grn_cta" />
+      <Variable x:TypeArguments="x:String" Name="prm_pap_grn_rgi" />
+      <Variable x:TypeArguments="x:String" Name="prm_pre_ass_ema_ava" />
+      <Variable x:TypeArguments="x:String" Name="prm_tfa_ini" />
+      <Variable x:TypeArguments="x:String" Name="prm_pre_ass_ema_abe" />
+      <Variable x:TypeArguments="x:String" Name="prm_pre_ass_ema_ret" />
+      <Variable x:TypeArguments="x:String" Name="prm_nom_usr_abe" />
+      <Variable x:TypeArguments="x:String" Name="prm_pap_ini_flx" />
+      <Variable x:TypeArguments="x:String" Default="[prm_cdg_pss.ToString() + &quot; &quot; + instanceSummary]" Name="prm_rsm_plt" />
+      <Variable x:TypeArguments="qc:FixedList" Name="prm_idc_apv_exe" />
+      <Variable x:TypeArguments="x:String" Name="prm_ult_prc_grn" />
+      <Variable x:TypeArguments="qc:FixedList" Name="prm_idc_retorno" />
+      <Variable x:TypeArguments="qc:FixedList" Name="prm_idc_apv_grn_crd" />
+      <Variable x:TypeArguments="x:String" Name="prm_prc_grn_crd" />
+      <Variable x:TypeArguments="x:String" Name="prm_prc_cad" />
+      <Variable x:TypeArguments="x:String" Name="prm_prc_grn_rgi" />
+    </StateMachine.Variables>
+    <sads:DebugSymbol.Symbol>dzlDOlxVc2Vyc1xid2FybWxpbmdcRGVza3RvcFxXRl9QTEVJVE9fQ09OVFJBVE9WRU5DSURPLnhhbWyOASkDmwISAgEBkQI0kQJwAwHVAWc3az8DAc8BTRftAR8DAcIBYC9vNwMBswF7N8EBPwMBpgGYAUe5AU8DAZoBnwFPtQFXAwGNAYoBR5MBTwMBgAFGD/IBFwIBdlwnyQEvAgFxKwf2AQ8CAUKGAT+9AUcCAT3VAS/hATcCAStYH+kBJwIBJnQvxQE3AgEaqgFXsQFfAgEOzgEn5QEvAgECaTtppgIDAdEBTxtTJgMBxQFiM2LiBwMBtgF9O4EBRgMBqQGaAUuaAZcHAwGdAaEBU6UBXgMBkAGMAUuOAVYDAYMBSBNISgIBf0t6S4ICAgF78AGcAfABlQICAXheiAFe4wECAXRyhwFy2wECAXMtC0EWAgFFiAGgAYgB/wECAUCWAZ8BlgH3AQIBP9cBM9wBPgIBLlp7Ws8BAgEpzAF7zAHWAQIBKHYzdssGAgEdrAFbrAGIBwIBEdABK9AB3wUCAQVpigJpowIDAdQBadMBaf4BAwHTAWmYAWnHAQMB0gFQHVBUAwHOAVEdUesCAwHKAVIdUqECAwHGAWJnYn4DAcABYsICYqQFAwG/AWL8BWLfBwMBugFikQFivAIDAbcBfj1+dAMBsgF/PX+8AwMBrgGAAT2AAcACAwGqAZoBf5oBlgEDAaQBmgHyApoB5gUDAaMBmgG+BpoBlAcDAaEBmgGpAZoB7AIDAZ4BogFVogGNAQMBmQGjAVWjAaUDAwGVAaQBVaQB1AIDAZEBjQFNjQH7BgMBhAEuDS7/AQIBbS8NL7wCAgFpMA0wkQICAWUxDTGSAgIBYTINQBICAUbYATXYAW0CATzZATXZAa8CAgE42gE12gHqAgIBM9sBNdsBqgICAS92Z3Z+AgEkdt0CdqYFAgEjdv0FdsgGAgEhdpEBdtcCAgEerAGPAawBpgECARisAY0DrAHmBQIBF6wBvgasAYUHAgEVrAG5AawBhwMCARLQAV/QAXYCAQzQAd4B0AGrBAIBC9ABgwXQAdwFAgEJ0AGJAdAB2AECAQZRaFGcAQMBzQFRiwJRvgIDAcwBUccCUegCAwHLAVKFAlKeAgMByQFSvgFS+QEDAcgBUntSsgEDAccBf4gBf9sBAwGxAX/HAn/sAgMBsAF/9QJ/uQMDAa8BgAGkAoABvQIDAa0BgAHdAYABmAIDAawBgAGbAYAB0QEDAasBowGgAaMB2AEDAZgBowG9AqMB6gIDAZcBowHzAqMBogMDAZYBpAG4AqQB0QIDAZQBpAH1AaQBrAIDAZMBpAGzAaQB6QEDAZIBjQGBAY0BmAEDAYsBjQHWAo0BywUDAYoBjQGiBo0B+AYDAYgBjQGrAY0B0AIDAYUBLuMBLvwBAgFwLqgBLtcBAgFvLmsunAECAW4voAIvuQICAWwvrQEvlAICAWsvay+hAQIBajD1ATCOAgIBaDCmATDpAQIBZzBrMJoBAgFmMfYBMY8CAgFkMZ8BMeoBAgFjMWsxkwECAWIyGzJ8AgFHNBE5HAIBUjwRPhwCAUrZAZMC2QGsAgIBO9kB1AHZAYcCAgE62QGTAdkByAECATnaAYAB2gGuAQIBN9oBnQLaAbACAgE12gG5AtoB5wICATTbAY4C2wGnAgIBMtsBywHbAYICAgEx2wGTAdsBvwECATA1EzWLAgIBXTYTOB4CAVM9Ez3JBQIBSzXvATWIAgIBYDWwATXjAQIBXzVxNaQBAgFeNxU3/AUCAVQ9Rz1eAgFQPcUBPdcEAgFPPa8FPcYFAgFNPXE9vwECAUw3STdgAgFbN/oBN4sFAgFaN+IFN/kFAgFYN3M39AECAVU=</sads:DebugSymbol.Symbol>
+  </StateMachine>
+  <sap2010:WorkflowViewState.ViewStateManager>
+    <sap2010:ViewStateManager>
+      <sap2010:ViewStateData Id="StoredProcedureActivity_14" sap:VirtualizedContainerService.HintSize="1727,153" />
+      <sap2010:ViewStateData Id="StoredProcedureActivity_15" sap:VirtualizedContainerService.HintSize="1727,153" />
+      <sap2010:ViewStateData Id="StoredProcedureActivity_16" sap:VirtualizedContainerService.HintSize="1727,153" />
+      <sap2010:ViewStateData Id="StoredProcedureActivity_18" sap:VirtualizedContainerService.HintSize="1727,153" />
+      <sap2010:ViewStateData Id="StoredProcedureActivity_17" sap:VirtualizedContainerService.HintSize="840,153" />
+      <sap2010:ViewStateData Id="SendEmailActivity_8" sap:VirtualizedContainerService.HintSize="818,232" />
+      <sap2010:ViewStateData Id="Sequence_15" sap:VirtualizedContainerService.HintSize="840,356">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_23" sap:VirtualizedContainerService.HintSize="862,673">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="SendEmailActivity_33" sap:VirtualizedContainerService.HintSize="818,232" />
+      <sap2010:ViewStateData Id="Sequence_24" sap:VirtualizedContainerService.HintSize="840,356">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="If_1" sap:VirtualizedContainerService.HintSize="1727,821">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Sequence_13" sap:VirtualizedContainerService.HintSize="1749,1717">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Persist_4" sap:VirtualizedContainerService.HintSize="200,22" />
+      <sap2010:ViewStateData Id="Persist_5" sap:VirtualizedContainerService.HintSize="287,22" />
+      <sap2010:ViewStateData Id="TaskActivity_2" sap:VirtualizedContainerService.HintSize="287,264" />
+      <sap2010:ViewStateData Id="StoredProcedureActivity_27" sap:VirtualizedContainerService.HintSize="287,153" />
+      <sap2010:ViewStateData Id="Sequence_1" sap:VirtualizedContainerService.HintSize="309,643">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="SendEmailActivity_11" sap:VirtualizedContainerService.HintSize="1025,232" />
+      <sap2010:ViewStateData Id="StoredProcedureActivity_8" sap:VirtualizedContainerService.HintSize="203,153" />
+      <sap2010:ViewStateData Id="State_2" sap:VirtualizedContainerService.HintSize="157,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">1121.5,1049.5</av:Point>
+            <av:Size x:Key="ShapeSize">157,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">143.23433014900661</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_3" sap:VirtualizedContainerService.HintSize="430,512">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">1882.5,386.1 1912.5,386.1 1912.5,1095.25 1278.5,1095.25</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">44</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">56</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_4" sap:VirtualizedContainerService.HintSize="265,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">1617.5,349.5</av:Point>
+            <av:Size x:Key="ShapeSize">265,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">250.86271069125223</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_2" sap:VirtualizedContainerService.HintSize="464,507">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">1450.5,349.5 1450.5,319.5 1736.75,319.5 1736.75,349.5</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">46</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">34</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="SendEmailActivity_9" sap:VirtualizedContainerService.HintSize="895,232">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Persist_6" sap:VirtualizedContainerService.HintSize="403,22" />
+      <sap2010:ViewStateData Id="TaskActivity_3" sap:VirtualizedContainerService.HintSize="403,264" />
+      <sap2010:ViewStateData Id="StoredProcedureActivity_19" sap:VirtualizedContainerService.HintSize="403,153" />
+      <sap2010:ViewStateData Id="Sequence_2" sap:VirtualizedContainerService.HintSize="425,643">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="SendEmailActivity_2" sap:VirtualizedContainerService.HintSize="727,232" />
+      <sap2010:ViewStateData Id="Sequence_7" sap:VirtualizedContainerService.HintSize="749,356">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_15" sap:VirtualizedContainerService.HintSize="430,512">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">1734,703.05 1764,703.05 1764,1019.5 1254.95,1019.5 1254.95,1049.5</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">40</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">66</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_12" sap:VirtualizedContainerService.HintSize="268,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">1466,669.5</av:Point>
+            <av:Size x:Key="ShapeSize">268,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">253.69964102128597</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_5" sap:VirtualizedContainerService.HintSize="487,507">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">1175.5,669.5 1175.5,639.5 1600,639.5 1600,669.5</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">58</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">38</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="SendEmailActivity_15" sap:VirtualizedContainerService.HintSize="884,232" />
+      <sap2010:ViewStateData Id="Persist_10" sap:VirtualizedContainerService.HintSize="269,22" />
+      <sap2010:ViewStateData Id="TaskActivity_8" sap:VirtualizedContainerService.HintSize="269,264" />
+      <sap2010:ViewStateData Id="StoredProcedureActivity_21" sap:VirtualizedContainerService.HintSize="269,153" />
+      <sap2010:ViewStateData Id="Sequence_18" sap:VirtualizedContainerService.HintSize="291,643">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="SendEmailActivity_26" sap:VirtualizedContainerService.HintSize="944,232" />
+      <sap2010:ViewStateData Id="Transition_62" sap:VirtualizedContainerService.HintSize="430,512">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">900,1089.15 1121.5,1089.15</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">48</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">49</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_34" sap:VirtualizedContainerService.HintSize="280,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">620,1049.5</av:Point>
+            <av:Size x:Key="ShapeSize">280,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">266.2624013869513</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_61" sap:VirtualizedContainerService.HintSize="430,512">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">622,981.35 592,981.35 592,1083.05 620,1083.05</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">65</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">41</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_10" sap:VirtualizedContainerService.HintSize="276,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">622,929.5</av:Point>
+            <av:Size x:Key="ShapeSize">276,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">262.05226631083087</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_85">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">1100.1,872 1100.1,902 704.8,902 704.8,929.5</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">31</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">22</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_6" sap:VirtualizedContainerService.HintSize="299,64">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">980.5,808</av:Point>
+            <av:Size x:Key="ShapeSize">299,64</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">285.06749434210815</x:Double>
+            <x:Double x:Key="StateContainerHeight">28.304921018985283</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_6" sap:VirtualizedContainerService.HintSize="479,507">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">1120,730.5 1120,760.5 1115.05,760.5 1115.05,808</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">39</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">34</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_17" sap:VirtualizedContainerService.HintSize="222,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">1009,669.5</av:Point>
+            <av:Size x:Key="ShapeSize">222,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">207.85086518112757</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_83" sap:VirtualizedContainerService.HintSize="430,507">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">916.5,709.15 923.5,709.15 923.5,712.2 1009,712.2</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">48</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">53</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_5" sap:VirtualizedContainerService.HintSize="228,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">688.5,669.5</av:Point>
+            <av:Size x:Key="ShapeSize">228,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">213.80340656170915</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_32" sap:VirtualizedContainerService.HintSize="430,512">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">1444.5,533.5 1444.5,563.5 745.5,563.5 745.5,669.5</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">39</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">18</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_22" sap:VirtualizedContainerService.HintSize="290,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">1300,472.5</av:Point>
+            <av:Size x:Key="ShapeSize">290,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">276.08740939325889</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_4" sap:VirtualizedContainerService.HintSize="456,507">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">1430,410.5 1430.05,410.5 1430.05,472.5</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">39</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">34</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_15" sap:VirtualizedContainerService.HintSize="205,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">1327.5,349.5</av:Point>
+            <av:Size x:Key="ShapeSize">205,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">191</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_20" sap:VirtualizedContainerService.HintSize="454,507">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">1169.4,349.5 1169.4,319.5 1399.25,319.5 1399.25,349.5</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">62</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">26</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="SendEmailActivity_10" sap:VirtualizedContainerService.HintSize="542,232" />
+      <sap2010:ViewStateData Id="Persist_11" sap:VirtualizedContainerService.HintSize="267,22" />
+      <sap2010:ViewStateData Id="StoredProcedureActivity_24" sap:VirtualizedContainerService.HintSize="267,153" />
+      <sap2010:ViewStateData Id="TaskActivity_12" sap:VirtualizedContainerService.HintSize="267,264" />
+      <sap2010:ViewStateData Id="StoredProcedureActivity_26" sap:VirtualizedContainerService.HintSize="267,153" />
+      <sap2010:ViewStateData Id="Sequence_22" sap:VirtualizedContainerService.HintSize="289,836">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">True</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_26" sap:VirtualizedContainerService.HintSize="430,512">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">197.3,229.5 197.3,199.5 197.9,199.5 197.9,160.5</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">26</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">31</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_19" sap:VirtualizedContainerService.HintSize="218,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">121,229.5</av:Point>
+            <av:Size x:Key="ShapeSize">218,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">203.66666666666652</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_64" sap:VirtualizedContainerService.HintSize="430,505">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">980,506.05 197.3,506.05 197.3,290.5</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">41</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">27</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_35" sap:VirtualizedContainerService.HintSize="287,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">980,472.5</av:Point>
+            <av:Size x:Key="ShapeSize">287,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">272.80934967867483</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_63" sap:VirtualizedContainerService.HintSize="462,507">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">1110,410.5 1109.15,410.5 1109.15,472.5</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">39</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">34</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_20" sap:VirtualizedContainerService.HintSize="198,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">1011,349.5</av:Point>
+            <av:Size x:Key="ShapeSize">198,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">184.341351376648</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_27" sap:VirtualizedContainerService.HintSize="430,507">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">833.1,349.5 833.1,319.5 1070.4,319.5 1070.4,349.5</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">54</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">22</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_3" sap:VirtualizedContainerService.HintSize="208,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">687.5,349.5</av:Point>
+            <av:Size x:Key="ShapeSize">208,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">193.66666666666652</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_17" sap:VirtualizedContainerService.HintSize="622,507">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">581,133.05 770.7,133.05 770.7,349.5</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">40</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">30</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_84" sap:VirtualizedContainerService.HintSize="602,507">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">495.8,160.5 495.8,703.05 688.5,703.05</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">31</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">41</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_14" sap:VirtualizedContainerService.HintSize="142,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">439,99.5</av:Point>
+            <av:Size x:Key="ShapeSize">142,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">127.66666666666652</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="Transition_23" sap:VirtualizedContainerService.HintSize="430,512">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:PointCollection x:Key="ConnectorLocation">264.2,99.5 264.2,69.5 502.9,69.5 502.9,99.5</av:PointCollection>
+            <x:Int32 x:Key="SrcConnectionPointIndex">54</x:Int32>
+            <x:Int32 x:Key="DestConnectionPointIndex">34</x:Int32>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="State_16" sap:VirtualizedContainerService.HintSize="221,61">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <av:Point x:Key="ShapeLocation">109.5,99.5</av:Point>
+            <av:Size x:Key="ShapeSize">221,61</av:Size>
+            <x:Boolean x:Key="IsPinned">False</x:Boolean>
+            <x:Double x:Key="StateContainerWidth">206.86107439687947</x:Double>
+            <x:Double x:Key="StateContainerHeight">25</x:Double>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="StateMachine_1" sap:VirtualizedContainerService.HintSize="1959,1256">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="IsExpanded">False</x:Boolean>
+            <av:Point x:Key="ShapeLocation">0,0</av:Point>
+            <x:Double x:Key="StateContainerWidth">1945</x:Double>
+            <x:Double x:Key="StateContainerHeight">1220.5</x:Double>
+            <av:PointCollection x:Key="ConnectorLocation">30,75 30,123.9 109.5,123.9</av:PointCollection>
+            <x:Boolean x:Key="IsAnnotationDocked">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+      <sap2010:ViewStateData Id="WF_PLEITO_DZERO_1" sap:VirtualizedContainerService.HintSize="1999,1336">
+        <sap:WorkflowViewStateService.ViewState>
+          <scg:Dictionary x:TypeArguments="x:String, x:Object">
+            <x:Boolean x:Key="ShouldExpandAll">False</x:Boolean>
+          </scg:Dictionary>
+        </sap:WorkflowViewStateService.ViewState>
+      </sap2010:ViewStateData>
+    </sap2010:ViewStateManager>
+  </sap2010:WorkflowViewState.ViewStateManager>
+</Activity>
